@@ -1,0 +1,7 @@
+numpy==1.17.3
+scipy==1.4.0
+jax==0.1.59
+jaxlib==0.1.40
+pytest==5.4.2
+readme2tex==0.0.1b2
+GitPython==3.1.3
