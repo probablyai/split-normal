@@ -54,6 +54,7 @@ def test_cdf():
         scale_2=np.array([2, 1])
     )
     p = sn.jax.cdf(expected, **params)
+    print(type(p))
     actual = sn.jax.ppf(p, **params)
     npt.assert_almost_equal(actual, expected, decimal=5)
 
@@ -76,17 +77,14 @@ def test_ppf():
 
 
 def test_invalid_params():
-    # TODO: Test for list instead of Numpy array.
-    # TODO: Test for negative values.
-    # TODO: Test for `None` causing an exception.
-    # TODO: Test for `numpy.nan`.
     """
     If it make sense, invalid input values are handled similarly as in Numpy or SciPy.
-
     Deviations from behaviour of `pdf()`, `cdf()` and `ppf()` in `jax.scipy.stats.norm`:
 
     * If parameters `scale_1` or `scale_2` are negative, `numpy.nan` is returned as a result.
     """
+    # TODO: Test for list instead of Numpy array.
+    # TODO: Test for `numpy.nan`.
     x = np.array([1, 1, 1, 1])
     params_split_norm = dict(
         loc=1,
@@ -120,7 +118,7 @@ def test_invalid_params():
         scale_2=np.array([2, 2, -2, -2])
     )
     with pytest.raises(Exception) as e:
-        actual = sn.jax.pdf(x, **params_split_norm)
+        _ = sn.jax.pdf(x, **params_split_norm)
     assert str(e.value) == "Dtype object is not supported by JAX"
 
 
@@ -128,6 +126,7 @@ def test_grads():
     """
     Tests if functions are differentiable?
     """
+    # TODO: Test also PDF and PPF.
     x = 1.96
     params_split_norm = dict(
         loc=0,
