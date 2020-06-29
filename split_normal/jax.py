@@ -33,13 +33,9 @@ def pdf(x, loc, scale_1, scale_2):
         The value of PDF for `x`.
     """
     check_array_like(x, loc, scale_1, scale_2, func_name=whoami())
-    # from jax.numpy.lax_numpy import _promote_args_inexact
-    # x, loc, scale_1, scale_2 = _promote_args_inexact(whoami(), x, loc, scale_1, scale_2)
     scale_1, scale_2 = _convert_negative_to_nan(scale_1, scale_2)
     scale = jax.numpy.where(jax.numpy.less_equal(x, loc), scale_1, scale_2)
     a = _SQRT_2_DIV_PI / (scale_1 + scale_2)
-    # import jax.scipy
-    # jax.scipy.stats.norm.pdf(1)
     return a * jax.numpy.exp(- (x - loc) ** 2 / (2.0 * scale ** 2))
 
 
@@ -64,8 +60,6 @@ def cdf(x, loc, scale_1, scale_2):
         The probability that a random variable will take a value less than or equal to `x`.
     """
     check_array_like(x, loc, scale_1, scale_2, func_name=whoami())
-    # from jax.numpy.lax_numpy import _promote_args_inexact
-    # x, loc, scale_1, scale_2 = _promote_args_inexact(whoami(), x, loc, scale_1, scale_2)
     scale_1, scale_2 = _convert_negative_to_nan(scale_1, scale_2)
     scale = jax.numpy.where(jax.numpy.less_equal(x, loc), scale_1, scale_2)
     return (scale_1 + jax.scipy.special.erf((x - loc) / (_SQRT_2 * scale)) * scale) / (scale_1 + scale_2)

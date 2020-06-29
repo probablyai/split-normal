@@ -1,7 +1,5 @@
 import sys
 import numpy as np
-from jax.interpreters.ad import JVPTracer
-from jax.interpreters.xla import DeviceArray
 
 __all__ = [
     'whoami',
@@ -10,17 +8,15 @@ __all__ = [
     'convert_negative_to_nan'
 ]
 
+from jax.numpy import ndarray, isscalar
+
 
 def whoami():
     return sys._getframe(1).f_code.co_name
 
 
 def is_array_like(x):
-    # TODO: First two relevant only for differentiation.
-    return isinstance(x, DeviceArray) or \
-           isinstance(x, JVPTracer) or \
-           isinstance(x, np.ndarray) or \
-           np.isscalar(x)
+    return isinstance(x, ndarray) or isscalar(x)
 
 
 def check_array_like(*args, func_name=None):
