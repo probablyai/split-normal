@@ -2,6 +2,7 @@ import pytest
 import scipy as sp
 import numpy as np
 import numpy.testing as npt
+import jax
 from jax import jit, grad, vmap
 
 import split_normal as sn
@@ -83,8 +84,6 @@ def test_invalid_params():
 
     * If parameters `scale_1` or `scale_2` are negative, `numpy.nan` is returned as a result.
     """
-    # TODO: Test for list instead of Numpy array.
-    # TODO: Test for `numpy.nan`.
     x = np.array([1, 1, 1, 1])
     params_split_norm = dict(
         loc=1,
@@ -122,11 +121,34 @@ def test_invalid_params():
     assert str(e.value) == "Dtype object is not supported by JAX"
 
 
-def test_grads():
+def test_pdf_grads():
     """
-    Tests if functions are differentiable?
+    Tests if PDF function is differentiable.
     """
-    # TODO: Test also PDF and PPF.
+    x = np.array([-1.96, 0., 1.96])
+    params_split_norm = dict(
+        loc=0,
+        scale_1=1,
+        scale_2=1
+    )
+
+    # split normal distribution
+    grad_sn_pdf = jit(grad(sn.jax.pdf, argnums=(0, )), static_argnums=(1, 2, 3))
+    batched_grad_sn_pdf = vmap(grad_sn_pdf, in_axes=(0, None, None, None))
+    x_sn_grads = batched_grad_sn_pdf(x, params_split_norm['loc'], params_split_norm['scale_1'], params_split_norm['scale_2'])
+
+    # normal distribution
+    grad_n_pdf = jit(grad(jax.scipy.stats.norm.pdf, argnums=(0,)), static_argnums=(1, 2))
+    batched_grad_n_pdf = vmap(grad_n_pdf, in_axes=(0, None, None))
+    x_n_grads = batched_grad_n_pdf(x, 0, 1)
+
+    npt.assert_almost_equal(x_sn_grads, x_n_grads)
+
+
+def test_cdf_grads():
+    """
+    Tests if CDF function is differentiable.
+    """
     x = 1.96
     params_split_norm = dict(
         loc=0,
@@ -144,3 +166,28 @@ def test_grads():
     x_grads = batched_grad_cdf(x, params_split_norm['loc'], params_split_norm['scale_1'], params_split_norm['scale_2'])
     expected = sp.stats.norm.pdf(x, 0, 1)
     npt.assert_almost_equal(x_grads[0], expected)
+
+
+def test_ppf_grads():
+    """
+    Tests if CDF function is differentiable.
+    """
+    p = np.array([0.01, 0.5, 0.99])
+    params_split_norm = dict(
+        loc=0,
+        scale_1=1,
+        scale_2=1
+    )
+
+    # split normal distribution
+    grad_ppf = jit(grad(sn.jax.ppf, argnums=(0, )), static_argnums=(1, 2, 3))
+    batched_grad_ppf = vmap(grad_ppf, in_axes=(0, None, None, None))
+    p_sn_grads = batched_grad_ppf(p, params_split_norm['loc'], params_split_norm['scale_1'], params_split_norm['scale_2'])
+    print(p_sn_grads)
+
+    # normal distribution
+    grad_n_ppf = jit(grad(jax.scipy.stats.norm.ppf, argnums=(0,)), static_argnums=(1, 2))
+    batched_grad_n_ppf = vmap(grad_n_ppf, in_axes=(0, None, None))
+    p_n_grads = batched_grad_n_ppf(p, 0, 1)
+
+    npt.assert_almost_equal(p_sn_grads, p_n_grads, decimal=4)
