@@ -1,0 +1,42 @@
+{% set name = "split-normal" %}
+{% set version = "0.1.0a1" %}
+
+package:
+  name: "{{ name|lower }}"
+  version: "{{ version }}"
+
+source:
+  url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
+  sha256: 2e99c117c45df879b8e05a6280b83a666adb5094c84f0d62e32e5dbee2ca49ed
+
+build:
+  number: 0
+  script: "{{ PYTHON }} -m pip install . -vv"
+
+requirements:
+  build:
+    - numpy >=1.17.3
+    - scipy >=1.4.0
+    - jax >=0.1.59
+    - jaxlib >=0.1.40
+    - python {{ python }}
+    - pip
+  run:
+    - numpy >=1.17.3
+    - scipy >=1.4.0
+    - jax >=0.1.59
+    - jaxlib >=0.1.40
+    - python
+
+test:
+  imports:
+    - split_normal
+
+about:
+  home: "https://github.com/probablyai/split-normal"
+  license: MIT
+  summary: "A tiny package implementing functions of the split normal distribution compatible with Numpy and JAX."
+
+extra:
+  recipe-maintainers:
+    - probablyai
