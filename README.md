@@ -8,12 +8,6 @@ A tiny package implementing functions of the split normal distribution compatibl
 pip install split-normal
 ```
 
-or
-
-```shell script
-conda install split-normal -c probablyai -c conda-forge
-```
-
 ## Usage
 
 ```python
