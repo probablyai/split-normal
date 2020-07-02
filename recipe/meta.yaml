@@ -1,5 +1,5 @@
 {% set name = "split-normal" %}
-{% set version = "0.1.0a1" %}
+{% set version = "0.1.0a2" %}
 
 package:
   name: "{{ name|lower }}"
@@ -7,21 +7,14 @@ package:
 
 source:
   url: "https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/{{ name }}-{{ version }}.tar.gz"
-  sha256: 2e99c117c45df879b8e05a6280b83a666adb5094c84f0d62e32e5dbee2ca49ed
+  sha256: aa47846dcbdd003005230d0b0dc42106b85df968f1d3b5384e44ba7326a3daa2
 
 build:
   number: 0
   script: "{{ PYTHON }} -m pip install . -vv"
 
 requirements:
-  build:
-    - python {{ python }}
-    - pip
   host:
-    - numpy >=1.17.3
-    - scipy >=1.4.0
-    - jax >=0.1.59
-    - jaxlib >=0.1.40
     - python {{ python }}
     - pip
   run:
