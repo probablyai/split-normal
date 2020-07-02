@@ -11,7 +11,7 @@ pip install split-normal
 or
 
 ```shell script
-conda install split-normal
+conda install split-normal -c probablyai -c conda-forge
 ```
 
 ## Usage
